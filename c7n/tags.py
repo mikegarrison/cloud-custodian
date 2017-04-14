@@ -590,7 +590,8 @@ class NormalizeTag(Action):
         action={'type': 'string',
                 'items': {
                     'enum': ['upper', 'lower', 'title' 'strip', 'replace']}},
-        value={'type': 'string'})
+        value={'type': 'string'},
+        replace={'type': 'string'})
 
     permissions = ('ec2:CreateTags',)
 
@@ -660,6 +661,8 @@ class NormalizeTag(Action):
                     new_value = r.title()
                 elif self.data.get('action') == 'strip' and self.data.get('value') and self.data.get('value') in r:
                     new_value = r.strip(self.data.get('value'))
+                elif self.data.get('action') == 'remove' and self.data.get('value') and self.data.get('value') in r:
+                    new_value = r.replace(self.data.get('value'), '')
                 if new_value:
                     futures.append(
                         w.submit(self.process_transform, new_value, resource_set[r]))
